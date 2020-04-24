@@ -350,4 +350,4 @@ MigrationBackup/
 .ionide/
 
 #Config-files
-Config/Main.conf.xml
+/Azuki/config/Main.conf.xml

@@ -12,7 +12,7 @@
   </a>-->
 </p>
 <p align="center">
-    ![.NET Core](https://github.com/Side-Character/Azuki/workflows/.NET%20Core/badge.svg?branch=master)
+    ![.NET Core](<img src="https://github.com/Side-Character/Azuki/workflows/.NET%20Core/badge.svg?branch=master">)
   <!--<a href="http://red-discordbot.readthedocs.io/en/stable/?badge=stable">
     <img src="" alt="Azuki on readthedocs.org">
   </a>-->
