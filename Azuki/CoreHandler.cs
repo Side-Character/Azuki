@@ -157,21 +157,21 @@ namespace Chris
         {
             if (!e.Message.Author.IsBot)
             {
-                if (!e.Message.Content.StartsWith(Chris.config.DefaultStartChar))
+                if (!e.Message.Content.StartsWith(Azuki.config.DefaultStartChar))
                 {
                     return;
                 }
                 List<string> split = e.Message.Content.Split(" ", 2).ToList();
-                string command = split.FirstOrDefault().TrimStart(Chris.config.DefaultStartChar).ToLower();
+                string command = split.FirstOrDefault().TrimStart(Azuki.config.DefaultStartChar).ToLower();
                 string paramstring = "";
                 if (split.Count > 1)
                 {
                     paramstring = split[1];
                 }
                 List<KeyValuePair<string, Tuple<BaseModule, MethodInfo>>> possibleCommands = commands.Where(t => t.Key.ToLower().EndsWith(command)).ToList();
-                if (Chris.Admins.Contains(e.Message.Author.Id))
+                if (Azuki.Admins.Contains(e.Message.Author.Id))
                 {
-                    possibleCommands.AddRange(Chris.AdminCommands.Where(t => t.Key.ToLower().EndsWith(command)).ToList());
+                    possibleCommands.AddRange(Azuki.AdminCommands.Where(t => t.Key.ToLower().EndsWith(command)).ToList());
                 }
                 if (possibleCommands.Count() <= 0)
                 {

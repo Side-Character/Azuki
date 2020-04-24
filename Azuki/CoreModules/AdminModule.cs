@@ -23,7 +23,7 @@ namespace Chris.AdminModules {
         [Command()]
         internal void ShutDown() {
             log.Debug($"Shutting Down.");
-            Chris.stopsignal.Set();
+            Azuki.stopsignal.Set();
         }
     }
 }
