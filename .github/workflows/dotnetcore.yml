@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Add repository
-      run: nuget sources add -name "private-packages" -source https://nuget.pkg.github.com/athy91/index.json -StorePasswordInClearText -username [username] -password ${{ secrets.GITHUB_TOKEN }}
+      run: nuget sources add -name "private-packages" -source https://nuget.pkg.github.com/athy91/index.json -StorePasswordInClearText -username [username] -password ${{ secrets.TOKEN }}
     - name: Install dependencies
       run: dotnet restore
     - name: Build
