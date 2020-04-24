@@ -2,10 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+	<RepositoryUrl>https://github.com/Side-Character/Azuki</RepositoryUrl>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="AzukiModuleApi" Version="1.0.0" />
+    <PackageReference Include="AzukiModuleApi">
+      <Version>1.0.10</Version>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
