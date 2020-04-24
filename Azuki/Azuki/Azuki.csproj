@@ -9,10 +9,14 @@
 
   <ItemGroup>
     <None Remove="Config\Main.conf.xml" />
+    <None Remove="Config\Main.default.conf.xml" />
     <None Remove="Log.xml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Config\Main.default.conf.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Main.conf.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

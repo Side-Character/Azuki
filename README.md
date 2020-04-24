@@ -1,5 +1,4 @@
 ﻿# Azuki
-
 <a href="https://github.com/Side-Character/Azuki"><img src="https://cdn.discordapp.com/attachments/323446657100414976/703202820366532668/Flandre.png" alt="Azuki(Discord Bot)"></a>
 <h1 align="center">
   Azuki(Discord Bot)
