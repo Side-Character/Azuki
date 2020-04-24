@@ -7,10 +7,11 @@
     <AssemblyVersion>1.0.10.0</AssemblyVersion>
     <FileVersion>1.0.10.0</FileVersion>
 	<RepositoryUrl>https://github.com/Side-Character/Azuki</RepositoryUrl>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="del $(ProjectDir)bin\$(ConfigurationName)\*.nupkg&#xD;&#xA;dotnet pack --configuration $(ConfigurationName)&#xD;&#xA;forfiles /P $(ProjectDir)bin\$(ConfigurationName)\ /m *.nupkg /c &quot;cmd /c dotnet nuget push @FILE --source &quot;github&quot; --skip-duplicate&quot;&#xD;&#xA;" />
+    <Exec Command="del $(ProjectDir)bin\$(ConfigurationName)\*.nupkg&#xD;&#xA;dotnet pack --configuration $(ConfigurationName)&#xD;&#xA;forfiles /P $(ProjectDir)bin\$(ConfigurationName)\ /m *.nupkg /c &quot;cmd /c dotnet nuget push @FILE --source github --skip-duplicate&quot;&#xD;&#xA;" />
   </Target>
 
 </Project>
