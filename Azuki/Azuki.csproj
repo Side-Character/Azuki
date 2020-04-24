@@ -9,13 +9,13 @@
 
   <ItemGroup>
     <Content Include="Config\Main.default.conf.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Main.conf.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Log.conf.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
