@@ -9,4 +9,8 @@
 	<RepositoryUrl>https://github.com/Side-Character/Azuki</RepositoryUrl>
   </PropertyGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="del $(ProjectDir)bin\$(ConfigurationName)\*.nupkg&#xD;&#xA;dotnet pack --configuration $(ConfigurationName)&#xD;&#xA;forfiles /P $(ProjectDir)bin\$(ConfigurationName)\ /m *.nupkg /c &quot;cmd /c dotnet nuget push @FILE --source &quot;github&quot; --skip-duplicate&quot;&#xD;&#xA;" />
+  </Target>
+
 </Project>
