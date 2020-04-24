@@ -351,3 +351,4 @@ MigrationBackup/
 
 #Config-files
 /Azuki/config/Main.conf.xml
+/AzukiModuleApi/nuget.config
