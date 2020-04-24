@@ -20,9 +20,7 @@ jobs:
     - name: Setup NuGet.exe for use with actions
       uses: NuGet/setup-nuget@v1.0.2
     - name: Add repository
-      run: nuget sources add -name "private-packages" -source https://nuget.pkg.github.com/Side-Character/index.json -StorePasswordInClearText -username [username] -password ${{ secrets.TOKEN }}
-    - name: Restore dependencies
-      run: nuget restore
+      run: dotnet nuget add source -n "private-packages" https://nuget.pkg.github.com/Side-Character/index.json --store-password-in-clear-text -u [username] -p ${{ secrets.TOKEN }}
     - name: Install dependencies
       run: dotnet restore
     - name: Build
