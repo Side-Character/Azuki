@@ -195,6 +195,7 @@ PublishScripts/
 # NuGet v3's project.json files produces more ignorable files
 *.nuget.props
 *.nuget.targets
+*/nuget.config
 
 # Microsoft Azure Build Output
 csx/
@@ -351,4 +352,4 @@ MigrationBackup/
 
 #Config-files
 /Azuki/config/Main.conf.xml
-/AzukiModuleApi/nuget.config
+
