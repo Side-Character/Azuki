@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace Chris {
-    public class Chris {
+    public class Azuki {
         internal static readonly Dictionary<string, Tuple<BaseModule, MethodInfo>> AdminCommands = new Dictionary<string, Tuple<BaseModule, MethodInfo>>();
         internal static Config config;
         internal static List<Snowflake> Admins;
@@ -29,7 +29,7 @@ namespace Chris {
         private readonly ILog discorelog;
         private readonly List<CoreHandler> handlers = new List<CoreHandler>();
         private readonly Dictionary<string, Tuple<BaseModule, MethodInfo>> Commands = new Dictionary<string, Tuple<BaseModule, MethodInfo>>();
-        static Chris() {
+        static Azuki() {
             AppContext.SetSwitch("System.Net.Http.UseSocketsHttpHandler", false);
             XmlSerializer serializer = new XmlSerializer(typeof(Config));
             try {
@@ -45,7 +45,7 @@ namespace Chris {
                 Environment.Exit(-1);
             }
         }
-        public Chris() {
+        public Azuki() {
             ILoggerRepository repository = LogManager.CreateRepository("Azuki");
             XmlConfigurator.ConfigureAndWatch(repository, new FileInfo("Config/Log.conf.xml"));
 
@@ -78,7 +78,7 @@ namespace Chris {
             }
         }
         public static void Main(string[] args) {
-            Chris chris = new Chris();
+            Azuki chris = new Azuki();
             chris.Run().Wait();
         }
         public async Task Run() {
