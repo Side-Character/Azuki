@@ -1,6 +1,6 @@
 ﻿<h1 align="center">
   Azuki (Discord Bot)
-</h1
+</h1>
 <p align="center">
   <a href="https://discord.gg/M7p26z">
     <img src="https://discordapp.com/api/guilds/703203636657913886/widget.png?style=shield" alt="Discord Server">
