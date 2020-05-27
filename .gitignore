@@ -350,5 +350,5 @@ MigrationBackup/
 .ionide/
 
 #Config-files
-/Azuki/config/Main.conf.xml
+Main.conf.xml
 nuget.config
