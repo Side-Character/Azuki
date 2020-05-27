@@ -25,7 +25,7 @@ using System.Xml.Serialization;
 namespace Azuki.Core {
     public class AzukiCore : BaseModule {
         internal static readonly Dictionary<string, Tuple<BaseModule, MethodInfo>> AdminCommands = new Dictionary<string, Tuple<BaseModule, MethodInfo>>();
-        internal static Config config;
+        internal static AzukiConfig config;
         internal static List<Snowflake> Admins;
         internal static ManualResetEvent stopsignal = new ManualResetEvent(false);
         private readonly ILog log;
@@ -62,9 +62,9 @@ namespace Azuki.Core {
                     DiscoreLogger.MinimumLevel = DiscoreLogLevel.Debug;
                 }
                 DiscoreLogger.OnLog += DiscoreLogger_OnLog;
-                XmlSerializer serializer = new XmlSerializer(typeof(Config));
+                XmlSerializer serializer = new XmlSerializer(typeof(AzukiConfig));
                 using (XmlReader reader = XmlReader.Create("Config/Main.conf.xml")) {
-                    config = serializer.Deserialize(reader) as Config;
+                    config = serializer.Deserialize(reader) as AzukiConfig;
                 }
                 Admins = config.Admins;
             } catch (Exception e) {
