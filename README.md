@@ -2,8 +2,8 @@
   Azuki (Discord Bot)
 </h1>
 <p align="center">
-  <a href="https://discord.gg/M7p26z">
-    <img src="https://discordapp.com/api/guilds/703203636657913886/widget.png?style=shield" alt="Discord Server">
+  <a href="https://discord.gg/f74aU5">
+    <img src="https://discordapp.com/api/guilds/703203636657913886/widget.png" alt="Discord Server">
   </a>
   <!--<a href="https://crowdin.com/project/">
     <img src="" alt="Localized with Crowdin">

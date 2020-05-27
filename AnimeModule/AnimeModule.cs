@@ -11,7 +11,8 @@ namespace AnimeModule {
     public class AnimeModule : BaseModule {
         private static HttpClient client = new HttpClient();
         public AnimeModule() { }
-        public async void Search(ICoreHandler handler, ulong channelid, string @params) {
+        [Command(NeedsHandler = true, HasParams = true, NeedsMessage =true)]
+        public async void Search(ICoreHandler handler, Message Message, string @params) {
             int number = 5;
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -21,7 +22,7 @@ namespace AnimeModule {
             HtmlNode document = html.DocumentNode;
             for (int i = 0; i < number; i++) {
                 HtmlNode info = document.QuerySelectorAll("h2.cardName").ToArray()[i];
-                handler.Respond(channelid, info.InnerText);
+                handler.Respond(Message.ChannelId, info.InnerText);
             }
         }
     }

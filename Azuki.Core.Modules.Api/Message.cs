@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AzukiModuleApi {
+﻿namespace Azuki.Core.Modules.Api {
     public class Message {
         public ulong Id { get; private set; }
         public ulong ChannelId { get; private set; }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AzukiModuleApi {
+﻿namespace Azuki.Core.Modules.Api {
     public interface ICoreHandler {
         void Respond(ulong channelid, string message);
         void React(ulong channelid, ulong messageid, string emojiname);

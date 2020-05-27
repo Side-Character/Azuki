@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AzukiModuleApi {
+﻿namespace Azuki.Core.Modules.Api {
     public abstract class BaseModule {
         public BaseModule() { }
     }

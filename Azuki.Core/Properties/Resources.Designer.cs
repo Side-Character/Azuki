@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Chris.Properties {
+namespace Azuki.Core.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Chris.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Chris.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Azuki.Core.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,24 @@ namespace Chris.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fallback to Console logging..
+        /// </summary>
+        internal static string LoggerFallback {
+            get {
+                return ResourceManager.GetString("LoggerFallback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reading log settings..
+        /// </summary>
+        internal static string ReadLogSettings {
+            get {
+                return ResourceManager.GetString("ReadLogSettings", resourceCulture);
             }
         }
     }

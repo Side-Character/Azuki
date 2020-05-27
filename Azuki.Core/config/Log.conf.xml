@@ -7,7 +7,7 @@
       <appender-ref ref="ConsoleAppender" />
     </root>
     <logger name="Core">
-      <level value="Info" />
+      <level value="All" />
     </logger>
     <logger name="Core.Admin">
       <level value="Warn" />
