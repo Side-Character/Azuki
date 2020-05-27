@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Azuki.Core.CoreModules {
-    internal class Admin : BaseModule {
+    internal class AdminModule : BaseModule {
         private readonly ILog log;
-        public Admin() {
+        public AdminModule() {
             log = LogManager.GetLogger("Azuki", "Core.Admin");
         }
         [Command(NeedsHandler = true, HasParams = true)]

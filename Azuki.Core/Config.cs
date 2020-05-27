@@ -3,7 +3,7 @@ using Discore;
 using System;
 using System.Collections.Generic;
 
-namespace Azuki.Core.Config {
+namespace Azuki.Core {
     [Serializable()]
     [System.Xml.Serialization.XmlRoot("Config")]
     public class Config {
