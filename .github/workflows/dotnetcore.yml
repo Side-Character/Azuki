@@ -12,14 +12,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v1.4.0
       with:
-        dotnet-version: 3.1.101
-    - name: Add repository
-      run: dotnet nuget sources add -name "github" -source https://nuget.pkg.github.com/Side-Character/index.json -StorePasswordInClearText -username [username] -password ${{ secrets.TOKEN }}
+        source-url: https://nuget.pkg.github.com/Side-Character/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    - name: Nuget push
+      run: dotnet nuget push ./Azuki.Core.Modules.Api/bin/Release/*.nupkg --skip-duplicate --no-symbols true
     - name: Test
       run: dotnet test --no-restore --verbosity normal
