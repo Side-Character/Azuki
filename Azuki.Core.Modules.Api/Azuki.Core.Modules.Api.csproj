@@ -10,8 +10,12 @@
 	<RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == '' Or'$(BuildingInsideVisualStudio)' == 'false'">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == '' Or'$(BuildingInsideVisualStudio)' == 'false' And '$(OS)' == 'Windows_NT'">
     <Exec Command="dotnet pack --configuration $(ConfigurationName)&#xD;&#xA;forfiles /P $(ProjectDir)bin/$(ConfigurationName) /m *.nupkg /c &quot;cmd /c dotnet nuget push @FILE --source github --skip-duplicate&quot;&#xD;&#xA;" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == '' Or'$(BuildingInsideVisualStudio)' == 'false' And '$(OS)' == 'Unix'">
+    <Exec Command="dotnet pack --configuration $(ConfigurationName)&#xD;&#xA;find  $(ProjectDir)bin/$(ConfigurationName) -name *.nupkg -exec dotnet nuget push {} --source github --skip-duplicate&quot; \;&#xD;&#xA;" />
   </Target>
 
 </Project>
