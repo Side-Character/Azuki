@@ -60,7 +60,7 @@ namespace Azuki.Core.Modules {
                     c.TempfileClosed += TempfileClosed;
                     music.Transfer(new FileInfo($"Temp/{filename}"), c, playCancellationTokenSource);
                 }
-            }
+            }*/
         }
         /*private void TempfileClosed(object sender, FileSystemEventArgs e) {
             try {
