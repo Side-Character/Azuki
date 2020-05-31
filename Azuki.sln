@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimeModule", "AnimeModule\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azuki.Core.Modules.Api", "Azuki.Core.Modules.Api\Azuki.Core.Modules.Api.csproj", "{B18D20E3-6481-4598-A249-46EB7427CCE2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicPlayerModule", "Azuki.Core.Modules.MusicPlayer\Azuki.Core.Modules.MusicPlayer.csproj", "{F5B4EE03-5ADD-48E4-BA37-A1C9B5FED2E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azuki.Core.Modules.MusicPlayerModule", "Azuki.Core.Modules.MusicPlayer\Azuki.Core.Modules.MusicPlayerModule.csproj", "{F5B4EE03-5ADD-48E4-BA37-A1C9B5FED2E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azuki.Core", "Azuki.Core\Azuki.Core.csproj", "{DAAC87B8-2971-424B-A5DD-29C6CE322B4E}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -31,10 +31,6 @@ Global
 		{FDEA19F2-5282-4334-88BB-579DA729BC5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDEA19F2-5282-4334-88BB-579DA729BC5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDEA19F2-5282-4334-88BB-579DA729BC5C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57CEC9FA-362B-45B6-94B2-979DAC41B79C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57CEC9FA-362B-45B6-94B2-979DAC41B79C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57CEC9FA-362B-45B6-94B2-979DAC41B79C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57CEC9FA-362B-45B6-94B2-979DAC41B79C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B18D20E3-6481-4598-A249-46EB7427CCE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B18D20E3-6481-4598-A249-46EB7427CCE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B18D20E3-6481-4598-A249-46EB7427CCE2}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -96,6 +96,24 @@ namespace Azuki.Core {
                         Command.Value.Item2.Error(string.Format(Resources.Culture, Resources.ResourceManager.GetString("UsingDuplicateParam", Resources.Culture), info.Name, info.ParameterType.Name));
                         return;
                     }
+                    DiscordVoiceConnection connection = null;
+                    if (attr.NeedsVoice) {
+                        DiscordGuildTextChannel channel = shard.Cache.GetGuildTextChannel(e.Message.ChannelId);
+                        if (channel == null) {
+                            channel = await client.GetChannel<DiscordGuildTextChannel>(e.Message.ChannelId).ConfigureAwait(true);
+                            log.Debug(Resources.ResourceManager.GetString("HadToLoadGuild", Resources.Culture));
+                        }
+                        DiscordVoiceState voiceState = shard.Cache.GetVoiceState(channel.GuildId, e.Message.Author.Id);
+                        if (voiceState.ChannelId.HasValue) {
+                            connection = shard.Voice.CreateOrGetConnection(channel.GuildId);
+                            if (connection.IsValid && !connection.IsConnected && !connection.IsConnecting) {
+                                await connection.ConnectAsync(voiceState.ChannelId.Value, startDeaf: true).ConfigureAwait(true);
+                                log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("ConnectedToVoiceChannel", Resources.Culture), voiceState.ChannelId.Value, Guilds.FirstOrDefault(g => g.Id == channel.GuildId)));
+                            }
+                        } else {
+                            return;
+                        }
+                    }
                     switch (t.Name) {
                         case "ICoreHandler": {
                                 if (!attr.NeedsHandler) {
@@ -108,7 +126,11 @@ namespace Azuki.Core {
                                 if (!attr.NeedsMessage) {
                                     Command.Value.Item2.Warn(string.Format(Resources.Culture, Resources.ResourceManager.GetString("UsingUnflaggedParam", Resources.Culture), info.Name, info.ParameterType.Name));
                                 }
-                                parameters.Add(new Message(e.Message.Id, e.Message.ChannelId.Id, e.Message.Author.Id));
+                                Message message = new Message(e.Message.Id, e.Message.ChannelId.Id, e.Message.Author.Id);
+                                if (attr.NeedsVoice) {
+                                    //message.
+                                }
+                                parameters.Add(message);
                                 break;
                             }
                         case "String": {
@@ -122,19 +144,6 @@ namespace Azuki.Core {
                                 Command.Value.Item2.Error(string.Format(Resources.Culture, Resources.ResourceManager.GetString("UsingUnknownParam", Resources.Culture), info.Name, info.ParameterType.Name));
                                 return;
                             }
-                    }
-                }
-                if (attr.NeedsVoice) {
-                    DiscordGuildTextChannel channel = shard.Cache.GetGuildTextChannel(e.Message.ChannelId);
-                    if (channel == null) {
-                        channel = await client.GetChannel<DiscordGuildTextChannel>(e.Message.ChannelId).ConfigureAwait(true);
-                        log.Debug(Resources.ResourceManager.GetString("HadToLoadGuild", Resources.Culture));
-                    }
-                    DiscordVoiceState voiceState = shard.Cache.GetVoiceState(channel.GuildId, e.Message.Author.Id);
-                    DiscordVoiceConnection connection = shard.Voice.CreateOrGetConnection(channel.GuildId);
-                    if (VoiceChannels.ContainsKey(channel.GuildId) && connection.IsValid && !connection.IsConnected && !connection.IsConnecting) {
-                        await connection.ConnectAsync(VoiceChannels[channel.GuildId].Id, startDeaf: true).ConfigureAwait(true);
-                        log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("ConnectedToVoiceChannel", Resources.Culture), VoiceChannels[channel.GuildId], Guilds.FirstOrDefault(g => g.Id == channel.GuildId)));
                     }
                 }
                 await Task.Run(() => {

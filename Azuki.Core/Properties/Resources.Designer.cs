@@ -313,6 +313,15 @@ namespace Azuki.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Modules unloaded in {0}s..
+        /// </summary>
+        internal static string UnLoadedModules {
+            get {
+                return ResourceManager.GetString("UnLoadedModules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate parameter {0} with type ({1})..
         /// </summary>
         internal static string UsingDuplicateParam {

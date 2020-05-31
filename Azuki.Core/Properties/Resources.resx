@@ -201,6 +201,9 @@
   <data name="SutdownComplete" xml:space="preserve">
     <value>Shutdown complete.</value>
   </data>
+  <data name="UnLoadedModules" xml:space="preserve">
+    <value>Modules unloaded in {0}s.</value>
+  </data>
   <data name="UsingDuplicateParam" xml:space="preserve">
     <value>Duplicate parameter {0} with type ({1}).</value>
   </data>

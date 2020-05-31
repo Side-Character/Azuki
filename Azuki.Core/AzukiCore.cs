@@ -38,7 +38,7 @@ namespace Azuki.Core {
         public AzukiCore() {
             try {
                 AppContext.SetSwitch("System.Net.Http.UseSocketsHttpHandler", false);
-                List<string> directorylist = new List<string> { "Config", "Modules" };
+                List<string> directorylist = new List<string> { "Config", "Modules", "Dependencies" };
                 foreach (string dir in directorylist) {
                     Directory.CreateDirectory(dir);
                 }
@@ -141,6 +141,7 @@ namespace Azuki.Core {
                 stopsignal.WaitOne();
                 log.Info(Resources.ResourceManager.GetString("ShuttingDown", Resources.Culture));
                 await UnLoadModules(null, null).ConfigureAwait(true);
+                client.Dispose();
                 log.Info(Resources.ResourceManager.GetString("SutdownComplete", Resources.Culture));
             } catch (Exception ex) {
                 log.Fatal(ex.ToString());
@@ -155,14 +156,17 @@ namespace Azuki.Core {
                 sw.Start();
                 log.Info(Resources.ResourceManager.GetString("LoadingModules", Resources.Culture));
                 List<Type> expectedparams = new List<Type> { typeof(ICoreHandler), typeof(ulong), typeof(ulong), typeof(string) };
+                foreach (string assembly in Directory.GetFiles("Dependencies", "*.dll")) {
+                    loader.LoadFromAssemblyPath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + Path.DirectorySeparatorChar + assembly);
+                }
                 foreach (string assembly in Directory.GetFiles("Modules", "*Module.dll")) {
                     log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundModuleContainer", Resources.Culture), Path.GetFileName(assembly)));
-                    List<Type> types = loader.LoadFromAssemblyPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + assembly).GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(BaseModule))).ToList();
+                    List<Type> types = loader.LoadFromAssemblyPath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + Path.DirectorySeparatorChar + assembly).GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(BaseModule))).ToList();
                     int count = 0;
                     foreach (Type t in types) {
                         count += LoadCommands(t);
                     }
-                    log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("LoadedModuleContainer", Resources.Culture), Path.GetFileName(assembly), Path.GetFileName(assembly), types.Count, count));
+                    log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("LoadedModuleContainer", Resources.Culture), Path.GetFileName(assembly), types.Count, count));
                 }
                 sw.Stop();
                 if (handler != null && message != null) {
@@ -189,13 +193,13 @@ namespace Azuki.Core {
             string name = t.Name.EndsWith("Module", StringComparison.OrdinalIgnoreCase) ? t.Name.Remove(t.Name.LastIndexOf("Module", StringComparison.OrdinalIgnoreCase)) : t.Name;
             foreach (MethodInfo cmd in possiblecommands) {
                 if (cmd.ReturnType != typeof(Task)) {
-                    log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommandRejected", Resources.Culture), cmd.Name));
+                    log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommandRejected", Resources.Culture), cmd.Name) + Resources.ResourceManager.GetString("FoundCommandRejectedReasonType", Resources.Culture));
                 } else {
-                    Commands.Add($"{name}.{ cmd.Name}", new Tuple<BaseModule, ILog, MethodInfo>(Activator.CreateInstance(t) as BaseModule, LogManager.GetLogger("Azuki", t.FullName), cmd));
-                    Commands[$"{name}.{ cmd.Name}"].Item1.LogDebug += delegate (object sender, string text) { Commands[$"{name}.{ cmd.Name}"].Item2.Debug(text); };
-                    Commands[$"{name}.{ cmd.Name}"].Item1.LogInfo += delegate (object sender, string text) { Commands[$"{name}.{ cmd.Name}"].Item2.Info(text); };
-                    Commands[$"{name}.{ cmd.Name}"].Item1.LogWarn += delegate (object sender, string text) { Commands[$"{name}.{ cmd.Name}"].Item2.Warn(text); };
-                    Commands[$"{name}.{ cmd.Name}"].Item1.LogError += delegate (object sender, string text) { Commands[$"{name}.{ cmd.Name}"].Item2.Error(text); };
+                    Commands.Add($"{name}.{cmd.Name}", new Tuple<BaseModule, ILog, MethodInfo>(Activator.CreateInstance(t) as BaseModule, LogManager.GetLogger("Azuki", t.FullName), cmd));
+                    Commands[$"{name}.{cmd.Name}"].Item1.LogDebug += delegate (object sender, string text) { Commands[$"{name}.{cmd.Name}"].Item2.Debug(text); };
+                    Commands[$"{name}.{cmd.Name}"].Item1.LogInfo += delegate (object sender, string text) { Commands[$"{name}.{cmd.Name}"].Item2.Info(text); };
+                    Commands[$"{name}.{cmd.Name}"].Item1.LogWarn += delegate (object sender, string text) { Commands[$"{name}.{cmd.Name}"].Item2.Warn(text); };
+                    Commands[$"{name}.{cmd.Name}"].Item1.LogError += delegate (object sender, string text) { Commands[$"{name}.{cmd.Name}"].Item2.Error(text); };
                     count++;
                     log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommand", Resources.Culture), cmd.Name));
                 }
