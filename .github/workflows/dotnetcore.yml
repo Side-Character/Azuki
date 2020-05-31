@@ -18,7 +18,7 @@ jobs:
     - name: Setup NuGet.exe for use with actions
       uses: NuGet/setup-nuget@v1.0.2
     - name: Add repository
-      run: nuget sources add -name "github" -source https://nuget.pkg.github.com/Side-Character/index.json -StorePasswordInClearText -username [username] -password ${{ secrets.TOKEN }}
+      run: nuget sources add -name "github" -source https://nuget.pkg.github.com/Side-Character/index.json -StorePasswordInClearText -username ${{ secrets.USERNAME }} -password ${{ secrets.TOKEN }}
     - name: Restore dependencies
       run: nuget restore
     - name: Install dependencies
