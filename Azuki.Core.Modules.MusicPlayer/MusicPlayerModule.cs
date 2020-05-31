@@ -66,7 +66,7 @@ namespace Azuki.Core.Modules {
                                             current += data_size;
                                         }
                                     }
-                                    //message.
+                                    //message.Tr
                                     //handler. .SendVoiceData(buffer, 0, read);
                                 }
                                 Marshal.FreeHGlobal(unmanagedPointer);

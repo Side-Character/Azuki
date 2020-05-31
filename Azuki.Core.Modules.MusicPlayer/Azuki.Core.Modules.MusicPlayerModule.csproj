@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.13" />
+    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.14" />
     <PackageReference Include="FFmpeg.AutoGen" Version="4.2.2.2" />
     <PackageReference Include="YoutubeExplode" Version="5.0.5" />
   </ItemGroup>

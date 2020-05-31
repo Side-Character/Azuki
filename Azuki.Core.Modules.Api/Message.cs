@@ -11,7 +11,7 @@ namespace Azuki.Core.Modules.Api {
             ChannelId = channelid;
             AuthorId = authorid;
         }
-        void TransferSound(byte[] data) {
+        public void TransferSound(byte[] data) {
             HasSound?.Invoke(this, data);
         }
     }
