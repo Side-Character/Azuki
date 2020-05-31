@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -15,7 +15,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == '' Or'$(BuildingInsideVisualStudio)' == 'false' And '$(OS)' == 'Unix'">
-    <Exec Command="dotnet pack --configuration $(ConfigurationName)&#xD;&#xA;find  $(ProjectDir)bin/$(ConfigurationName) -name *.nupkg -exec dotnet nuget push {} --source github --skip-duplicate&quot; \;&#xD;&#xA;" />
+    <Exec Command="dotnet pack --configuration $(ConfigurationName)&#xD;&#xA;find  $(ProjectDir)bin/$(ConfigurationName) -name '*.nupkg' -exec dotnet nuget push {} --source github --skip-duplicate \;&#xD;&#xA;" />
   </Target>
 
 </Project>
