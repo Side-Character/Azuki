@@ -1,30 +1,44 @@
-﻿using AzukiModuleApi;
+﻿using Azuki.Core.Modules.Api;
 using Discore;
 using log4net;
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 
 namespace Azuki.Core.CoreModules {
+#pragma warning disable CA1812
     internal class AdminModule : BaseModule {
         private readonly ILog log;
         public AdminModule() {
-            log = LogManager.GetLogger("Azuki", "Core.Admin");
+            log = LogManager.GetLogger("Azuki", "Core.CoreModules.Admin");
+        }
+        [Command(NeedsHandler = true, NeedsMessage = true)]
+        internal static Task Status(ICoreHandler handler, Message Message) {
+            CoreHandler core = handler as CoreHandler;
+            core.Respond(Message.ChannelId, core.ToString());
+            return Task.CompletedTask;
         }
         [Command(NeedsHandler = true, HasParams = true)]
         internal Task Broadcast(ICoreHandler handler, string broadcast) {
-            log.Debug($"Broadcasting message ({broadcast}) ...");
-            CoreHandler core = handler as CoreHandler;
-            ICollection<DiscordGuildTextChannel> guildChannels = core.AdminChannels.Values;
-            foreach (DiscordGuildTextChannel ch in guildChannels) {
-                core.Respond(ch.Id, broadcast);
+            try {
+                CoreHandler core = handler as CoreHandler;
+                foreach (DiscordGuild guild in core.Guilds) {
+                    if (guild.SystemChannelId.HasValue) {
+                        core.Respond(guild.SystemChannelId.Value, broadcast);
+                    } else {
+                        core.Respond(guild.Id, broadcast);
+                    }
+                }
+            } catch (Exception ex) {
+                log.Error(ex.ToString());
+                throw;
             }
             return Task.CompletedTask;
         }
         [Command()]
-        internal Task ShutDown() {
-            log.Debug($"Shutting Down.");
-            AzukiCore.stopsignal.Set();
+        internal static Task ShutDown() {
+            _ = AzukiCore.stopsignal.Set();
             return Task.CompletedTask;
         }
     }
+#pragma warning restore CA1812
 }

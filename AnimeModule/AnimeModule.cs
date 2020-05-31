@@ -1,18 +1,18 @@
-﻿using AzukiModuleApi;
+﻿using Azuki.Core.Modules.Api;
 using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace AnimeModule {
     public class AnimeModule : BaseModule {
-        private static HttpClient client = new HttpClient();
+        private static readonly HttpClient client = new HttpClient();
         public AnimeModule() { }
-        [Command(NeedsHandler = true, HasParams = true, NeedsMessage =true)]
-        public async void Search(ICoreHandler handler, Message Message, string @params) {
+        [Command(NeedsHandler = true, HasParams = true, NeedsMessage = true)]
+        public static async Task Search(ICoreHandler handler, Message Message, string @params) {
             int number = 5;
             Stopwatch sw = new Stopwatch();
             sw.Start();

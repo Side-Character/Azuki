@@ -1,5 +1,5 @@
-﻿using Azuki.Core.Properties;
-using AzukiModuleApi;
+﻿using Azuki.Core.Modules.Api;
+using Azuki.Core.Properties;
 using Discore;
 using Discore.Http;
 using Discore.WebSocket;
@@ -24,14 +24,14 @@ using System.Xml.Serialization;
 
 namespace Azuki.Core {
     public class AzukiCore : BaseModule {
-        internal static readonly Dictionary<string, Tuple<BaseModule, MethodInfo>> AdminCommands = new Dictionary<string, Tuple<BaseModule, MethodInfo>>();
+        internal static readonly Dictionary<string, Tuple<BaseModule, ILog, MethodInfo>> AdminCommands = new Dictionary<string, Tuple<BaseModule, ILog, MethodInfo>>();
         internal static AzukiConfig config;
         internal static List<Snowflake> Admins;
         internal static ManualResetEvent stopsignal = new ManualResetEvent(false);
         private readonly ILog log;
         private readonly ILog discorelog;
         private readonly List<CoreHandler> handlers = new List<CoreHandler>();
-        private readonly Dictionary<string, Tuple<BaseModule, MethodInfo>> Commands = new Dictionary<string, Tuple<BaseModule, MethodInfo>>();
+        private readonly Dictionary<string, Tuple<BaseModule, ILog, MethodInfo>> Commands = new Dictionary<string, Tuple<BaseModule, ILog, MethodInfo>>();
         private AssemblyLoadContext loader;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exiting on caught exception.")]
@@ -50,7 +50,7 @@ namespace Azuki.Core {
                     SetupFallbackLogRepository(repository);
                 }
                 log = LogManager.GetLogger("Azuki", "Core.Main");
-                discorelog = LogManager.GetLogger("Azuki", "DiscordAPI");
+                discorelog = LogManager.GetLogger("Azuki", "Discore.Main");
                 DiscoreLogger.MinimumLevel = DiscoreLogLevel.Error;
                 if (discorelog.IsWarnEnabled) {
                     DiscoreLogger.MinimumLevel = DiscoreLogLevel.Warning;
@@ -100,99 +100,116 @@ namespace Azuki.Core {
             try {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                log.Info("Initializing discord connection...");
+                log.Info(Resources.ResourceManager.GetString("Initializing", Resources.Culture));
                 DiscordHttpClient client = new DiscordHttpClient(config.Token);
                 await InitShards(client).ConfigureAwait(true);
                 sw.Stop();
-                log.Info($"Discord connection Initialized in {sw.Elapsed:s\\.f}s.");
-                log.Info($"Loading CoreModules...");
+                log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("InitialConnectionTime", Resources.Culture), sw.Elapsed.ToString("s\\.f", Resources.Culture)));
+                log.Info(Resources.ResourceManager.GetString("LoadingCoreModules", Resources.Culture));
                 sw.Reset();
                 sw.Start();
                 List<Type> modules = Assembly.GetExecutingAssembly().GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(BaseModule))).ToList();
                 foreach (Type type in modules) {
-                    log.Debug("Loading " + type.Name + " Module...");
+                    log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("LoadingModule", Resources.Culture), type.FullName));
                     MethodInfo[] possiblecommands = type.GetMethods(
                         BindingFlags.DeclaredOnly |
                         BindingFlags.InvokeMethod |
                         BindingFlags.Public |
                         BindingFlags.NonPublic |
-                        BindingFlags.Instance
+                        BindingFlags.Instance |
+                        BindingFlags.Static
                     ).Where(pcmd => pcmd.GetCustomAttribute<CommandAttribute>() != null)
                     .ToArray();
                     foreach (MethodInfo cmd in possiblecommands) {
                         if (cmd.ReturnType != typeof(Task)) {
-                            log.Debug($"Found Command {cmd.Name}, was rejected.(Reason: Wrong return type, must be Task)");
+                            log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommandRejected", Resources.Culture), cmd.Name));
                         } else {
                             if (type.FullName == typeof(AzukiCore).FullName) {
-                                AdminCommands.Add("Core." + cmd.Name, new Tuple<BaseModule, MethodInfo>(this, cmd));
+                                AdminCommands.Add("Core." + cmd.Name, new Tuple<BaseModule, ILog, MethodInfo>(this, log, cmd));
                             } else {
-                                AdminCommands.Add("Core." + cmd.Name, new Tuple<BaseModule, MethodInfo>(Activator.CreateInstance(type) as BaseModule, cmd));
+                                AdminCommands.Add("Core." + cmd.Name, new Tuple<BaseModule, ILog, MethodInfo>(Activator.CreateInstance(type) as BaseModule, LogManager.GetLogger("Azuki", type.FullName), cmd));
                             }
-                            log.Debug($"Found Command {cmd.Name}");
+                            log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommand", Resources.Culture), cmd.Name));
                         }
                     }
                 }
                 sw.Stop();
-                log.Info($"Core Modules loaded in {sw.Elapsed:s\\.f}s.");
-                log.Info("Startup complete.");
-                log.Info($"Auto-loading Modules for startup...");
-                await LoadModules().ConfigureAwait(true);
+                log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("LoadedCoreModules", Resources.Culture), sw.Elapsed.ToString("s\\.f", Resources.Culture)));
+                log.Info(Resources.ResourceManager.GetString("StartupComplete", Resources.Culture));
+                log.Info(Resources.ResourceManager.GetString("AutoLoadingModules", Resources.Culture));
+                await LoadModules(null, null).ConfigureAwait(true);
                 stopsignal.WaitOne();
-                log.Info("Shuttin down...");
-                await UnLoadModules().ConfigureAwait(true);
-                log.Info("Shutdown complete.");
+                log.Info(Resources.ResourceManager.GetString("ShuttingDown", Resources.Culture));
+                await UnLoadModules(null, null).ConfigureAwait(true);
+                log.Info(Resources.ResourceManager.GetString("SutdownComplete", Resources.Culture));
             } catch (Exception ex) {
                 log.Fatal(ex.ToString());
                 Environment.Exit(-1);
             }
         }
-        [Command()]
-        private Task LoadModules() {
+        [Command(NeedsHandler = true, NeedsMessage = true)]
+        private Task LoadModules(ICoreHandler handler, Message message) {
             try {
                 loader = new AssemblyLoadContext("AzukiModules", true);
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                log.Info($"Loading Modules...");
+                log.Info(Resources.ResourceManager.GetString("LoadingModules", Resources.Culture));
                 List<Type> expectedparams = new List<Type> { typeof(ICoreHandler), typeof(ulong), typeof(ulong), typeof(string) };
                 foreach (string assembly in Directory.GetFiles("Modules", "*Module.dll")) {
-                    log.Info($"Found possible Module container {Path.GetFileName(assembly)}");
+                    log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundModuleContainer", Resources.Culture), Path.GetFileName(assembly)));
                     List<Type> types = loader.LoadFromAssemblyPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + assembly).GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(BaseModule))).ToList();
-                    int c = 0;
+                    int count = 0;
                     foreach (Type t in types) {
-                        MethodInfo[] possiblecommands = t.GetMethods(
-                            BindingFlags.DeclaredOnly |
-                            BindingFlags.InvokeMethod |
-                            BindingFlags.Public |
-                            BindingFlags.Instance
-                        ).Where(pcmd => pcmd.GetCustomAttribute<CommandAttribute>() != null)
-                        .ToArray();
-                        string name = t.Name.EndsWith("Module", StringComparison.OrdinalIgnoreCase) ? t.Name.Remove(t.Name.LastIndexOf("Module", StringComparison.OrdinalIgnoreCase)) : t.Name;
-                        foreach (MethodInfo cmd in possiblecommands) {
-                            if (cmd.ReturnType != typeof(Task)) {
-                                log.Debug($"Found Command {cmd.Name}, was rejected.(Reason: Wrong return type, must be Task)");
-                            } else {
-                                Commands.Add(name + "." + cmd.Name, new Tuple<BaseModule, MethodInfo>(Activator.CreateInstance(t) as BaseModule, cmd));
-                                c++;
-                                log.Debug($"Found Command {cmd.Name}");
-                            }
-                        }
+                        count += LoadCommands(t);
                     }
-                    log.Info($"Module container {Path.GetFileName(assembly)} contained {types.Count} module(s) with {c} command(s).");
+                    log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("LoadedModuleContainer", Resources.Culture), Path.GetFileName(assembly), Path.GetFileName(assembly), types.Count, count));
                 }
                 sw.Stop();
-                log.Info($"Modules loaded in {sw.Elapsed:s\\.f}s.");
+                if (handler != null && message != null) {
+                    handler.Respond(message.ChannelId, string.Format(Resources.Culture, Resources.ResourceManager.GetString("LoadedModules", Resources.Culture), sw.Elapsed.ToString("s\\.f", Resources.Culture)));
+                }
+                log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("LoadedModules", Resources.Culture), sw.Elapsed.ToString("s\\.f", Resources.Culture)));
             } catch (Exception ex) {
                 log.Error(ex.ToString());
                 throw;
             }
             return Task.CompletedTask;
         }
-        [Command()]
-        private Task UnLoadModules() {
+        private int LoadCommands(Type t) {
+            int count = 0;
+            log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("LoadingModule", Resources.Culture), t.FullName));
+            MethodInfo[] possiblecommands = t.GetMethods(
+                BindingFlags.DeclaredOnly |
+                BindingFlags.InvokeMethod |
+                BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.Static
+            ).Where(pcmd => pcmd.GetCustomAttribute<CommandAttribute>() != null)
+            .ToArray();
+            string name = t.Name.EndsWith("Module", StringComparison.OrdinalIgnoreCase) ? t.Name.Remove(t.Name.LastIndexOf("Module", StringComparison.OrdinalIgnoreCase)) : t.Name;
+            foreach (MethodInfo cmd in possiblecommands) {
+                if (cmd.ReturnType != typeof(Task)) {
+                    log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommandRejected", Resources.Culture), cmd.Name));
+                } else {
+                    Commands.Add(name + "." + cmd.Name, new Tuple<BaseModule, ILog, MethodInfo>(Activator.CreateInstance(t) as BaseModule, LogManager.GetLogger("Azuki", t.FullName), cmd));
+                    count++;
+                    log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommand", Resources.Culture), cmd.Name));
+                }
+            }
+            return count;
+        }
+        [Command(NeedsHandler = true, NeedsMessage = true)]
+        private Task UnLoadModules(ICoreHandler handler, Message message) {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             foreach (var c in Commands) {
                 Commands.Remove(c.Key);
             }
             loader.Unload();
+            sw.Stop();
+            if (handler != null && message != null) {
+                handler.Respond(message.ChannelId, string.Format(Resources.Culture, Resources.ResourceManager.GetString("UnLoadedModules", Resources.Culture), sw.Elapsed.ToString("s\\.f", Resources.Culture)));
+            }
             return Task.CompletedTask;
         }
 
@@ -217,7 +234,7 @@ namespace Azuki.Core {
         private void InitHandler(DiscordHttpClient client, Shard shard) {
             try {
                 handlers.Add(new CoreHandler(client, shard, Commands));
-                log.Debug($"Created CoreHandler for shard {shard.Id}, Current count: {handlers.Count}");
+                log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("CreatedHandler", Resources.Culture), shard.Id, handlers.Count));
             } catch (Exception ex) {
                 log.Fatal(ex.ToString());
                 Environment.Exit(-1);

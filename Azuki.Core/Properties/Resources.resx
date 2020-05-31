@@ -117,10 +117,97 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AutoLoadingModules" xml:space="preserve">
+    <value>Auto-loading Modules for startup...</value>
+  </data>
+  <data name="CommandNotFound" xml:space="preserve">
+    <value>404 - Command not found. ({0}).</value>
+  </data>
+  <data name="ConnectedToVoiceChannel" xml:space="preserve">
+    <value>Connected to voice channel (0) in {1}.</value>
+  </data>
+  <data name="CreatedHandler" xml:space="preserve">
+    <value>Created CoreHandler for shard {0}, Current count: {1}.</value>
+  </data>
+  <data name="DiscoveredGuild" xml:space="preserve">
+    <value>Discovered guild ({0}).</value>
+  </data>
+  <data name="ExecutingCommand" xml:space="preserve">
+    <value>Executing command: {0}({1}).</value>
+  </data>
+  <data name="FoundCommand" xml:space="preserve">
+    <value>Found Command {0}.</value>
+  </data>
+  <data name="FoundCommandRejected" xml:space="preserve">
+    <value>Found Command {0}, it was rejected.</value>
+  </data>
+  <data name="FoundCommandRejectedReasonType" xml:space="preserve">
+    <value>(Reason: Wrong return type, must be Task)</value>
+  </data>
+  <data name="FoundModuleContainer" xml:space="preserve">
+    <value>Found possible Module container {0}.</value>
+  </data>
+  <data name="HadToLoadGuild" xml:space="preserve">
+    <value>Had to load guild data from API.(no cache)</value>
+  </data>
+  <data name="HandlerStatus" xml:space="preserve">
+    <value>Handler is using shard ({0}) and its running status is ({1}).</value>
+  </data>
+  <data name="InitialConnectionTime" xml:space="preserve">
+    <value>Discord connection Initialized in {0}s.</value>
+  </data>
+  <data name="Initializing" xml:space="preserve">
+    <value>Initializing discord connection...</value>
+  </data>
+  <data name="LoadedCoreModules" xml:space="preserve">
+    <value>Core Modules loaded in {0}s.</value>
+  </data>
+  <data name="LoadedModuleContainer" xml:space="preserve">
+    <value>Module container {0} contained {1} module(s) with {2} command(s).</value>
+  </data>
+  <data name="LoadedModules" xml:space="preserve">
+    <value>Modules loaded in {0}s.</value>
+  </data>
+  <data name="LoadingCoreModules" xml:space="preserve">
+    <value>Loading CoreModules...</value>
+  </data>
+  <data name="LoadingModule" xml:space="preserve">
+    <value>Loading {0} Module...</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Loading Modules...</value>
+  </data>
   <data name="LoggerFallback" xml:space="preserve">
     <value>Fallback to Console logging.</value>
   </data>
+  <data name="MultipleCommandsFound" xml:space="preserve">
+    <value>Multiple Commands found.({0)}).</value>
+  </data>
+  <data name="NoParams" xml:space="preserve">
+    <value>No parameters</value>
+  </data>
+  <data name="RanCommand" xml:space="preserve">
+    <value>Command {0} took {1}s.</value>
+  </data>
   <data name="ReadLogSettings" xml:space="preserve">
     <value>Reading log settings.</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>Shuttin down...</value>
+  </data>
+  <data name="StartupComplete" xml:space="preserve">
+    <value>Startup complete.</value>
+  </data>
+  <data name="SutdownComplete" xml:space="preserve">
+    <value>Shutdown complete.</value>
+  </data>
+  <data name="UsingDuplicateParam" xml:space="preserve">
+    <value>Duplicate parameter {0} with type ({1}).</value>
+  </data>
+  <data name="UsingUnflaggedParam" xml:space="preserve">
+    <value>Using parameter {0} with type ({1}) but flagged not using.</value>
+  </data>
+  <data name="UsingUnknownParam" xml:space="preserve">
+    <value>Unknown parameter {0} with type ({1}).</value>
   </data>
 </root>

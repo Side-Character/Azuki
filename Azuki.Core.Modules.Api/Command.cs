@@ -2,7 +2,7 @@
 
 namespace Azuki.Core.Modules.Api {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    public class CommandAttribute : Attribute {
+    public sealed class CommandAttribute : Attribute {
         public bool NeedsHandler {
             get;
             set;

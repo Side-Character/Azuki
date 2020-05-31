@@ -15,7 +15,7 @@ namespace Azuki.Core {
         [System.Xml.Serialization.XmlElementAttribute("AdminId")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Needed for Deserialization.")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2235:Mark all non-serializable fields", Justification = "<Pending>")]
-        public List<ulong> AdminIds { get; set;}
+        public List<ulong> AdminIds { get; set; }
         [System.Xml.Serialization.XmlIgnore]
         public char DefaultStartChar { get; set; }
         [System.Xml.Serialization.XmlIgnore]

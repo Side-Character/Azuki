@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AzukiModuleApi" Version="1.0.10" />
+    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.11" />
+    <PackageReference Include="FFmpeg.AutoGen" Version="4.2.2.2" />
   </ItemGroup>
 
 </Project>

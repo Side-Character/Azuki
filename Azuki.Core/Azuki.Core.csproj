@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,8 +8,14 @@
     <NeutralLanguage>en-150</NeutralLanguage>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
+    <DefineConstants>DEBUG</DefineConstants>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
-    <None Remove="config\Main.conf.xml" />
+    <None Remove="Config\Main.conf.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AzukiModuleApi" Version="1.0.10" />
+    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.11" />
     <PackageReference Include="Discore" Version="4.3.1" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">

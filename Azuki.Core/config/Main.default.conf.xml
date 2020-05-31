@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<AzukiConfig>
+<Config>
   <Token>{your-token}</Token>
   <Defaultstartchar>!</Defaultstartchar>
   <AdminId>{your-discord-id}</AdminId>
-</AzukiConfig>
+</Config>

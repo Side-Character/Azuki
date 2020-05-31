@@ -1,5 +1,5 @@
-﻿using Azuki.Core.Properties;
-using AzukiModuleApi;
+﻿using Azuki.Core.Modules.Api;
+using Azuki.Core.Properties;
 using Discore;
 using Discore.Http;
 using Discore.Voice;
@@ -17,11 +17,11 @@ namespace Azuki.Core {
         private readonly ILog log;
         private readonly DiscordHttpClient client;
         private readonly Shard shard;
-        private readonly Dictionary<string, Tuple<BaseModule, MethodInfo>> commands;
+        private readonly Dictionary<string, Tuple<BaseModule, ILog, MethodInfo>> commands;
         internal List<DiscordGuild> Guilds { get; } = new List<DiscordGuild>();
         internal Dictionary<Snowflake, DiscordGuildTextChannel> AdminChannels { get; } = new Dictionary<Snowflake, DiscordGuildTextChannel>();
         internal Dictionary<Snowflake, DiscordGuildVoiceChannel> VoiceChannels { get; } = new Dictionary<Snowflake, DiscordGuildVoiceChannel>();
-        public CoreHandler(DiscordHttpClient client, Shard shard, Dictionary<string, Tuple<BaseModule, MethodInfo>> commands) {
+        public CoreHandler(DiscordHttpClient client, Shard shard, Dictionary<string, Tuple<BaseModule, ILog, MethodInfo>> commands) {
             log = LogManager.GetLogger("Azuki", "Core.Handler");
             this.client = client;
             this.shard = shard;
@@ -31,7 +31,7 @@ namespace Azuki.Core {
             shard.Gateway.OnMessageCreated += Gateway_OnMessageCreated;
         }
         private void DiscoveredGuild(object sender, GuildEventArgs e) {
-            log.Debug($"Discovered guild ({e.Guild.Name})");
+            log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("DiscoveredGuild", Resources.Culture), e.Guild.Name));
             Guilds.Add(e.Guild);
         }
         internal void Respond(Snowflake channel, string message) {
@@ -64,16 +64,15 @@ namespace Azuki.Core {
                     if (split.Count > 1) {
                         paramstring = split[1];
                     }
-                    List<KeyValuePair<string, Tuple<BaseModule, MethodInfo>>> possibleCommands = commands.Where(t => t.Key.Substring(t.Key.LastIndexOf(".", StringComparison.CurrentCultureIgnoreCase) + 1).Equals(command, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                    List<KeyValuePair<string, Tuple<BaseModule, ILog, MethodInfo>>> possibleCommands = commands.Where(t => t.Key.Substring(t.Key.LastIndexOf(".", StringComparison.CurrentCultureIgnoreCase) + 1).Equals(command, StringComparison.CurrentCultureIgnoreCase)).ToList();
                     if (AzukiCore.Admins.Contains(e.Message.Author.Id)) {
                         possibleCommands.AddRange(AzukiCore.AdminCommands.Where(t => t.Key.Substring(t.Key.LastIndexOf(".", StringComparison.CurrentCultureIgnoreCase) + 1).Equals(command, StringComparison.CurrentCultureIgnoreCase)).ToList());
                     }
                     if (possibleCommands.Count <= 0) {
-                        _ = client.CreateMessage(e.Message.ChannelId, $"404 - Command not found. ({command})");
+                        _ = client.CreateMessage(e.Message.ChannelId, string.Format(Resources.Culture, Resources.ResourceManager.GetString("CommandNotFound", Resources.Culture), command));
                         return;
                     } else if (possibleCommands.Count > 1) {
-                        _ = client.CreateMessage(e.Message.ChannelId, "Multiple Commands found.");
-                        log.Warn($"Multiple Commands found. ({string.Join(',', possibleCommands)})");
+                        _ = client.CreateMessage(e.Message.ChannelId, string.Format(Resources.Culture, Resources.ResourceManager.GetString("MultipleCommandsFound", Resources.Culture), string.Join(',', possibleCommands)));
                         return;
                     }
                     ExecuteCommand(possibleCommands.FirstOrDefault(), e, paramstring);
@@ -84,44 +83,44 @@ namespace Azuki.Core {
             }
         }
 
-        private async void ExecuteCommand(KeyValuePair<string, Tuple<BaseModule, MethodInfo>> Command, MessageEventArgs e, string @params) {
+        private async void ExecuteCommand(KeyValuePair<string, Tuple<BaseModule, ILog, MethodInfo>> Command, MessageEventArgs e, string @params) {
             try {
-                log.Debug("Executing command: " + Command.Key + ":" + ((string.IsNullOrEmpty(@params)) ? "no params" : @params));
+                log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("ExecutingCommand", Resources.Culture), Command.Key, string.IsNullOrEmpty(@params) ? Resources.ResourceManager.GetString("NoParams", Resources.Culture) : @params));
                 Stopwatch st = new Stopwatch();
                 st.Start();
-                MethodInfo method = Command.Value.Item2;
+                MethodInfo method = Command.Value.Item3;
                 CommandAttribute attr = method.GetCustomAttribute<CommandAttribute>();
                 List<object> parameters = new List<object>();
                 foreach (ParameterInfo info in method.GetParameters()) {
                     Type t = info.ParameterType;
                     if (parameters.Exists(p => p.GetType().Equals(t))) {
-                        log.Error($"Duplicate parameter with type ({info.ParameterType.Name}).");
+                        Command.Value.Item2.Error(string.Format(Resources.Culture, Resources.ResourceManager.GetString("UsingDuplicateParam", Resources.Culture), info.Name, info.ParameterType.Name));
                         return;
                     }
                     switch (t.Name) {
                         case "ICoreHandler": {
                                 if (!attr.NeedsHandler) {
-                                    log.Warn($"Using parameter with type ({info.ParameterType.Name}) but flagged not using.");
+                                    Command.Value.Item2.Warn(string.Format(Resources.Culture, Resources.ResourceManager.GetString("UsingUnflaggedParam", Resources.Culture), info.Name, info.ParameterType.Name));
                                 }
                                 parameters.Add(this);
                                 break;
                             }
                         case "Message": {
                                 if (!attr.NeedsMessage) {
-                                    log.Warn($"Using parameter with type ({info.ParameterType.Name}) but flagged not using.");
+                                    Command.Value.Item2.Warn(string.Format(Resources.Culture, Resources.ResourceManager.GetString("UsingUnflaggedParam", Resources.Culture), info.Name, info.ParameterType.Name));
                                 }
                                 parameters.Add(new Message(e.Message.Id, e.Message.ChannelId.Id, e.Message.Author.Id));
                                 break;
                             }
                         case "String": {
                                 if (!attr.HasParams) {
-                                    log.Warn($"Using parameter with type ({info.ParameterType.Name}) but flagged not using.");
+                                    Command.Value.Item2.Warn(string.Format(Resources.Culture, Resources.ResourceManager.GetString("UsingUnflaggedParam", Resources.Culture), info.Name, info.ParameterType.Name));
                                 }
                                 parameters.Add(@params);
                                 break;
                             }
                         default: {
-                                log.Error($"Unknown parameter with type ({info.ParameterType.Name}).");
+                                Command.Value.Item2.Error(string.Format(Resources.Culture, Resources.ResourceManager.GetString("UsingUnknownParam", Resources.Culture), info.Name, info.ParameterType.Name));
                                 return;
                             }
                     }
@@ -130,29 +129,35 @@ namespace Azuki.Core {
                     DiscordGuildTextChannel channel = shard.Cache.GetGuildTextChannel(e.Message.ChannelId);
                     if (channel == null) {
                         channel = await client.GetChannel<DiscordGuildTextChannel>(e.Message.ChannelId).ConfigureAwait(true);
-                        log.Debug("Had to load guild data from API.(no cache)");
+                        log.Debug(Resources.ResourceManager.GetString("HadToLoadGuild", Resources.Culture));
                     }
                     DiscordVoiceState voiceState = shard.Cache.GetVoiceState(channel.GuildId, e.Message.Author.Id);
                     DiscordVoiceConnection connection = shard.Voice.CreateOrGetConnection(channel.GuildId);
                     if (VoiceChannels.ContainsKey(channel.GuildId) && connection.IsValid && !connection.IsConnected && !connection.IsConnecting) {
                         await connection.ConnectAsync(VoiceChannels[channel.GuildId].Id, startDeaf: true).ConfigureAwait(true);
-                        log.Debug($"Connected to voice channel in {Guilds.FirstOrDefault(g => g.Id == channel.GuildId)}");
+                        log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("ConnectedToVoiceChannel", Resources.Culture), VoiceChannels[channel.GuildId], Guilds.FirstOrDefault(g => g.Id == channel.GuildId)));
                     }
                 }
                 await Task.Run(() => {
                     try {
-                        Command.Value.Item2.Invoke(Command.Value.Item1, parameters.ToArray());
-                    } catch (Exception ex) {
-                        log.Error(ex);
-                        throw;
+                        if (Command.Value.Item3.IsStatic) {
+                            Command.Value.Item3.Invoke(null, parameters.ToArray());
+                        } else {
+                            Command.Value.Item3.Invoke(Command.Value.Item1, parameters.ToArray());
+                        }
+                    } catch (InvalidOperationException ex) {
+                        Command.Value.Item2.Error(ex.InnerException.ToString());
                     }
                 }).ConfigureAwait(true);
                 st.Stop();
-                log.Debug($"Command {Command.Key} took {st.Elapsed:s\\.f}s");
+                log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("RanCommand", Resources.Culture), Command.Key, st.Elapsed.ToString("s\\.f", Resources.Culture)));
             } catch (Exception ex) {
                 log.Error(ex);
                 throw;
             }
+        }
+        public override string ToString() {
+            return string.Format(Resources.Culture, Resources.ResourceManager.GetString("HandlerStatus", Resources.Culture), shard.Id, shard.IsRunning);
         }
     }
 }

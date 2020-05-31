@@ -5,19 +5,17 @@ using System.Threading.Tasks;
 
 namespace Azuki.Utils {
     public static class Downloader {
-        private static HttpClient client = new HttpClient();
+        private static readonly HttpClient client = new HttpClient();
 
         public static async void DownloadToFile(Uri url, string path) {
             Stream stream = await client.GetStreamAsync(url).ConfigureAwait(true);
-            using (StreamWriter sw = new StreamWriter(path)) {
-                stream.CopyTo(sw.BaseStream);
-            }
+            using StreamWriter sw = new StreamWriter(path);
+            stream.CopyTo(sw.BaseStream);
         }
         public static async void DownloadToFile(string url, string path) {
             Stream stream = await client.GetStreamAsync(new Uri(url)).ConfigureAwait(true);
-            using (StreamWriter sw = new StreamWriter(path)) {
-                stream.CopyTo(sw.BaseStream);
-            }
+            using StreamWriter sw = new StreamWriter(path);
+            stream.CopyTo(sw.BaseStream);
         }
         public static async Task<string> DownloadToString(Uri url) {
             client.CancelPendingRequests();
