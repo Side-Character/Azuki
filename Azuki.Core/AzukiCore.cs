@@ -191,7 +191,11 @@ namespace Azuki.Core {
                 if (cmd.ReturnType != typeof(Task)) {
                     log.Info(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommandRejected", Resources.Culture), cmd.Name));
                 } else {
-                    Commands.Add(name + "." + cmd.Name, new Tuple<BaseModule, ILog, MethodInfo>(Activator.CreateInstance(t) as BaseModule, LogManager.GetLogger("Azuki", t.FullName), cmd));
+                    Commands.Add($"{name}.{ cmd.Name}", new Tuple<BaseModule, ILog, MethodInfo>(Activator.CreateInstance(t) as BaseModule, LogManager.GetLogger("Azuki", t.FullName), cmd));
+                    Commands[$"{name}.{ cmd.Name}"].Item1.LogDebug += delegate (object sender, string text) { Commands[$"{name}.{ cmd.Name}"].Item2.Debug(text); };
+                    Commands[$"{name}.{ cmd.Name}"].Item1.LogInfo += delegate (object sender, string text) { Commands[$"{name}.{ cmd.Name}"].Item2.Info(text); };
+                    Commands[$"{name}.{ cmd.Name}"].Item1.LogWarn += delegate (object sender, string text) { Commands[$"{name}.{ cmd.Name}"].Item2.Warn(text); };
+                    Commands[$"{name}.{ cmd.Name}"].Item1.LogError += delegate (object sender, string text) { Commands[$"{name}.{ cmd.Name}"].Item2.Error(text); };
                     count++;
                     log.Debug(string.Format(Resources.Culture, Resources.ResourceManager.GetString("FoundCommand", Resources.Culture), cmd.Name));
                 }

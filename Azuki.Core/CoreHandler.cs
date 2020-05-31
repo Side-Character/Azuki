@@ -19,7 +19,6 @@ namespace Azuki.Core {
         private readonly Shard shard;
         private readonly Dictionary<string, Tuple<BaseModule, ILog, MethodInfo>> commands;
         internal List<DiscordGuild> Guilds { get; } = new List<DiscordGuild>();
-        internal Dictionary<Snowflake, DiscordGuildTextChannel> AdminChannels { get; } = new Dictionary<Snowflake, DiscordGuildTextChannel>();
         internal Dictionary<Snowflake, DiscordGuildVoiceChannel> VoiceChannels { get; } = new Dictionary<Snowflake, DiscordGuildVoiceChannel>();
         public CoreHandler(DiscordHttpClient client, Shard shard, Dictionary<string, Tuple<BaseModule, ILog, MethodInfo>> commands) {
             log = LogManager.GetLogger("Azuki", "Core.Handler");

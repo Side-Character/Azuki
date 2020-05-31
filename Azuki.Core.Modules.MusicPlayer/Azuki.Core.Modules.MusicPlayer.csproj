@@ -5,9 +5,18 @@
 	<RepositoryUrl>https://github.com/Side-Character/Azuki</RepositoryUrl>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.11" />
+    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.12" />
     <PackageReference Include="FFmpeg.AutoGen" Version="4.2.2.2" />
+    <PackageReference Include="YoutubeExplode" Version="5.0.5" />
   </ItemGroup>
 
 </Project>

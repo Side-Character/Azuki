@@ -6,8 +6,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.0.11.0</AssemblyVersion>
     <FileVersion>1.0.11.0</FileVersion>
-	<RepositoryUrl>https://github.com/Side-Character/Azuki</RepositoryUrl>
-	<RunPostBuildEvent>Always</RunPostBuildEvent>
+    <RepositoryUrl>https://github.com/Side-Character/Azuki</RepositoryUrl>
   </PropertyGroup>
 
 </Project>

@@ -1,16 +1,35 @@
 ﻿using Azuki.Core.Modules.Api;
+using FFmpeg.AutoGen;
+using System;
+using System.IO;
+using System.Linq;
+using YoutubeExplode;
+using YoutubeExplode.Videos;
+using YoutubeExplode.Videos.Streams;
 
 namespace Azuki.Core.Modules {
     public class MusicPlayerModule : BaseModule {
-        /*private static readonly List<string> Tempnamelist = new List<string> { "Temp0", "Temp1", "Temp2", "Temp3", "Temp4", "Temp5", "Temp6", "Temp7" };
-        private static int i = 8;
-        private CancellationTokenSource playCancellationTokenSource = new CancellationTokenSource();
-        public ManualResetEvent stopsignal = new ManualResetEvent(false);
-        private VoiceProvider voice;
+        private static readonly YoutubeClient client = new YoutubeClient();
 
         [Command(NeedsHandler = true, NeedsMessage = true, NeedsVoice = true, HasParams = true)]
-        public async void Play(ICoreHandler handler, Message message) {
-            DiscordGuildTextChannel Channel = client.GetChannel(e.Message.ChannelId).Result as DiscordGuildTextChannel;
+        public async void Play(ICoreHandler handler, Message message, string param) {
+            Video vid = (await client.Search.GetVideosAsync(param)).FirstOrDefault();
+            if (vid != null) {
+                if (vid.Duration <= TimeSpan.FromMinutes(10)) {
+                    StreamManifest streamManifest = await client.Videos.Streams.GetManifestAsync(vid.Id);
+                    AudioOnlyStreamInfo audio = streamManifest.GetAudioOnly().FirstOrDefault();
+                    if(audio != null) {
+                        MemoryStream stream = new MemoryStream();
+                        await client.Videos.Streams.CopyToAsync(audio, stream);
+                        unsafe {
+                            AVCodec* codec = ffmpeg.avcodec_find_decoder_by_name(audio.AudioCodec);
+                            //ffmpeg.avcodec_decode_audio4(codec, );
+                        }
+                    }
+                } else {
+                }
+            }
+            /*DiscordGuildTextChannel Channel = client.GetChannel(e.Message.ChannelId).Result as DiscordGuildTextChannel;
             Snowflake GuildId = Channel.GuildId;
             DiscordGuild Guild = await client.GetGuild(GuildId);
             Snowflake ChannelId = e.Message.ChannelId;

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.11" />
+    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.12" />
     <PackageReference Include="Fizzler.Systems.HtmlAgilityPack" Version="1.2.1" />
   </ItemGroup>
 
