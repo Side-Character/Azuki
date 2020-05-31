@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.14" />
+    <PackageReference Include="Azuki.Core.Modules.Api" Version="1.0.15" />
     <PackageReference Include="Discore" Version="4.3.1" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">

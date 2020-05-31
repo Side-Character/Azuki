@@ -128,7 +128,7 @@ namespace Azuki.Core {
                                 }
                                 Message message = new Message(e.Message.Id, e.Message.ChannelId.Id, e.Message.Author.Id);
                                 if (attr.NeedsVoice) {
-                                    //message.
+                                    message.HasSound += Message_HasSound;
                                 }
                                 parameters.Add(message);
                                 break;
@@ -164,6 +164,14 @@ namespace Azuki.Core {
                 throw;
             }
         }
+
+        private void Message_HasSound(object sender, byte[] e) {
+            Message message = sender as Message;
+            if (message != null) {
+
+            }
+        }
+
         public override string ToString() {
             return string.Format(Resources.Culture, Resources.ResourceManager.GetString("HandlerStatus", Resources.Culture), shard.Id, shard.IsRunning);
         }
